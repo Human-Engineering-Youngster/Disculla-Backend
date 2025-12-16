@@ -1,6 +1,8 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
+import { PrismaClient } from "../../../generated/prisma/client";
+
 import { PrismaService } from "./prisma.service";
 
 const mockPoolEnd = jest.fn();
@@ -54,7 +56,7 @@ describe("PrismaService", () => {
 
       try {
         new PrismaService(configService);
-      } catch (error) {
+      } catch (error: unknown) {
         expect(error).toBeInstanceOf(Error);
         expect((error as Error).message).toBe("DATABASE_URLが設定されていません。");
       }
@@ -72,7 +74,9 @@ describe("PrismaService", () => {
 
   describe("onModuleInit", () => {
     it("should connect to the database", async () => {
-      const connectSpy = jest.spyOn(service, "$connect").mockImplementation(async () => {});
+      const connectSpy = jest
+        .spyOn(service as unknown as PrismaClient, "$connect")
+        .mockImplementation(async () => {});
       await service.onModuleInit();
       expect(connectSpy).toHaveBeenCalled();
     });

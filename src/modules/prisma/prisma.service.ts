@@ -22,8 +22,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
       super({ adapter });
       this.pool = pool;
-    } catch (error) {
-      Logger.error("PrismaServiceの初期化中にエラーが発生しました:", error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.error("PrismaServiceの初期化中にエラーが発生しました:", errorMessage);
       throw error;
     }
   }
