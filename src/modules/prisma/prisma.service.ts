@@ -23,7 +23,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       this.pool = pool;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      Logger.error("PrismaServiceの初期化中にエラーが発生しました:", errorMessage);
+      Logger.error(`PrismaServiceの初期化中にエラーが発生しました: ${errorMessage}`);
       throw error;
     }
   }

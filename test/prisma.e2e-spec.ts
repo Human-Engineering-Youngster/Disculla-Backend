@@ -28,9 +28,10 @@ describe("PrismaService (e2e)", () => {
   });
 
   it("should be able to query the database", async () => {
-    const result = await prismaService.$queryRaw`SELECT 1 as result`;
+    type QueryResult = Array<{ result: number }>;
+    const result = await prismaService.$queryRaw<QueryResult>`SELECT 1 as result`;
     expect(result).toBeDefined();
     expect(Array.isArray(result)).toBeTruthy();
-    expect((result as Array<{ result: number }>)[0].result).toBe(1);
+    expect(result[0].result).toBe(1);
   });
 });

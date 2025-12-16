@@ -72,7 +72,7 @@ describe("PrismaService", () => {
 
   describe("onModuleInit", () => {
     it("should connect to the database", async () => {
-      const connectSpy = jest.spyOn(service, "$connect").mockImplementation(async () => {});
+      const connectSpy = jest.spyOn(service, "$connect").mockResolvedValue(undefined);
       await service.onModuleInit();
       expect(connectSpy).toHaveBeenCalled();
     });
