@@ -14,5 +14,8 @@ describe("User", () => {
     const user = User.reconstruct(id, clerkId, name, avatarUrl);
 
     expect(user.getAvatarUrl()).toBe(avatarUrl);
+    expect(user.getClerkId()).toBe(clerkId);
+    expect(user.getId()).toBe(id);
+    expect(user.getName()).toBe(name);
   });
 });

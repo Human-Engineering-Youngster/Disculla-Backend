@@ -94,6 +94,59 @@ describe("WebhookUsersController (e2e)", () => {
       });
   });
 
+  it("/webhooks/clerk/users (POST) - success (update)", async () => {
+    const svixId = "test-svix-id";
+    const timestamp = "test-timestamp";
+    const signature = "test-signature";
+    const body = {
+      type: "user.updated",
+      data: {
+        id: "user_123",
+        username: "updateduser",
+        image_url: "http://example.com/new-avatar.png",
+      },
+    };
+
+    const prismaUser = {
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      clerkId: "user_123",
+      name: "updateduser",
+      avatarUrl: "http://example.com/new-avatar.png",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const verifySpy = jest.spyOn(verifySvix, "verifySignature");
+    const updateSpy = jest.spyOn(prismaService.user, "update").mockResolvedValue(prismaUser);
+
+    return request(app.getHttpServer() as Server)
+      .post("/webhooks/clerk/users")
+      .set("svix-id", svixId)
+      .set("svix-timestamp", timestamp)
+      .set("svix-signature", signature)
+      .send(body)
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          clerkId: "user_123",
+          name: "updateduser",
+          avatarUrl: "http://example.com/new-avatar.png",
+        });
+
+        expect(verifySpy).toHaveBeenCalled();
+        expect(updateSpy).toHaveBeenCalledWith({
+          where: {
+            clerkId: "user_123",
+          },
+          data: {
+            name: "updateduser",
+            avatarUrl: "http://example.com/new-avatar.png",
+          },
+        });
+      });
+  });
+
   it("/webhooks/clerk/users (POST) - missing headers", async () => {
     return request(app.getHttpServer() as Server)
       .post("/webhooks/clerk/users")

@@ -49,7 +49,7 @@ export class UsersRepository implements IUserRepository {
       return this.toEntity(createdUser);
     } catch (error) {
       const errorMessage = "Failed to create user";
-      this.logger.error(errorMessage, error);
+      this.logger.error(`${errorMessage}: ${error instanceof Error ? error.stack : String(error)}`);
 
       throw new InternalServerErrorException(errorMessage);
     }
@@ -76,7 +76,7 @@ export class UsersRepository implements IUserRepository {
       return this.toEntity(updatedUser);
     } catch (error) {
       const errorMessage = "Failed to update user";
-      this.logger.error(errorMessage, error);
+      this.logger.error(`${errorMessage}: ${error instanceof Error ? error.stack : String(error)}`);
 
       throw new InternalServerErrorException(errorMessage);
     }

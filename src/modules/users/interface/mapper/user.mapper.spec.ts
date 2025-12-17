@@ -27,8 +27,7 @@ describe("UserMapper", () => {
     });
 
     it("should throw error if user is null", () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-      expect(() => UserMapper.formatResponse(null as any)).toThrow();
+      expect(() => UserMapper.formatResponse(null as unknown as User)).toThrow();
     });
   });
 });

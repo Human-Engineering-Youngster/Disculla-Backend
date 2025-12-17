@@ -19,7 +19,8 @@ export class ClerkIdVo {
       throw new Error("Clerk ID cannot be empty");
     }
 
-    if (!value.startsWith("user")) {
+    const clerkIdPattern = /^user_[A-Za-z0-9]+$/;
+    if (!clerkIdPattern.test(value)) {
       throw new Error("Invalid Clerk ID");
     }
   }

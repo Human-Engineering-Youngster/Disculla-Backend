@@ -15,8 +15,7 @@ export class VerifySvixSignatureService {
    * @param {string} svixId - Svix IDヘッダー
    * @param {string} timestamp - タイムスタンプヘッダー
    * @param {string} signature - 署名ヘッダー
-   * @throws {UnauthorizedException} 署名が無効な場合にスローされる例外
-   * @throws {WebhookVerificationError} 署名が無効な場合にスローされる例外
+   * @throws {UnauthorizedException} raw bodyが存在しない場合、または署名検証に失敗した場合にスローされる例外
    */
   execute(
     req: RawBodyRequest<Request>,
@@ -42,8 +41,8 @@ export class VerifySvixSignatureService {
       this.verifySvix.verifySignature(rawBody, svixHeaders);
     } catch (error) {
       if (error instanceof WebhookVerificationError) {
-        this.logger.error(error);
-        throw error;
+        this.logger.error(`Webhook signature verification failed: ${error.message}`);
+        throw new UnauthorizedException("Invalid webhook signature");
       }
 
       const errorMessage = "Error verifying webhook signature";

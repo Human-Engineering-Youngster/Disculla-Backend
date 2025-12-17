@@ -58,14 +58,14 @@ describe("VerifySvixSignatureService", () => {
       );
     });
 
-    it("should throw WebhookVerificationError if verification fails with WebhookVerificationError", () => {
+    it("should throw UnauthorizedException if verification fails with WebhookVerificationError", () => {
       const error = new WebhookVerificationError("Invalid signature");
       jest.spyOn(verifySvix, "verifySignature").mockImplementation(() => {
         throw error;
       });
 
       expect(() => service.execute(req, svixId, timestamp, signature)).toThrow(
-        WebhookVerificationError
+        UnauthorizedException
       );
     });
 

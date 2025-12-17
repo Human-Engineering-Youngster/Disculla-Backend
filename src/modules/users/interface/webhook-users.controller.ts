@@ -39,7 +39,9 @@ export class WebhookUsersController {
 
     this.verifySvixSignatureService.execute(req, svixId, timestamp, signature);
     const user = await this.saveUsersService.execute(saveUserDto);
-    this.logger.log("User saved successfully");
+    this.logger.log(
+      `User saved successfully: ${user.getClerkId().getValue()} (${saveUserDto.type})`
+    );
     return UserMapper.formatResponse(user);
   }
 }
