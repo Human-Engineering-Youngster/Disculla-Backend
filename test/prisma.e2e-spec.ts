@@ -32,6 +32,9 @@ describe("PrismaService (e2e)", () => {
     const result = await prismaService.$queryRaw<QueryResult>`SELECT 1 as result`;
     expect(result).toBeDefined();
     expect(Array.isArray(result)).toBeTruthy();
-    expect(result[0].result).toBe(1);
+    expect(result.length).toBeGreaterThan(0);
+    if (result.length > 0) {
+      expect(result[0]?.result).toBe(1);
+    }
   });
 });

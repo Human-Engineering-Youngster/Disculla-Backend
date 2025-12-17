@@ -54,7 +54,7 @@ describe("PrismaService", () => {
 
       try {
         new PrismaService(configService);
-      } catch (error) {
+      } catch (error: unknown) {
         expect(error).toBeInstanceOf(Error);
         expect((error as Error).message).toBe("DATABASE_URLが設定されていません。");
       }

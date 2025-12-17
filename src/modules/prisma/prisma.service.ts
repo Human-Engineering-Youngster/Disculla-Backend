@@ -24,7 +24,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       Logger.error(`PrismaServiceの初期化中にエラーが発生しました: ${errorMessage}`);
-      throw error;
+      throw error instanceof Error ? error : new Error(String(error));
     }
   }
 
@@ -33,6 +33,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.pool.end();
+    try {
+      await this.pool.end();
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      Logger.error(`Poolのクローズ中にエラーが発生しました: ${errorMessage}`);
+    }
   }
 }
