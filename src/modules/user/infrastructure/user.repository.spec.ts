@@ -2,13 +2,13 @@ import { InternalServerErrorException, Logger } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "src/modules/prisma/prisma.service";
-import { ClerkIdVo } from "src/modules/users/domain/clerk-id.vo";
-import { SaveUserVo } from "src/modules/users/domain/save-user.vo";
-import { AvatarUrlVo } from "src/modules/users/domain/user-avatar-url.vo";
-import { NameVo } from "src/modules/users/domain/user-name.vo";
-import { PrismaUser } from "src/modules/users/infrastructure/prisma-user.type";
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { SaveUserVo } from "src/modules/user/domain/save-user.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
+import { PrismaUser } from "src/modules/user/infrastructure/prisma-user.type";
 
-import { UsersRepository } from "./users.repository";
+import { UserRepository } from "./user.repository";
 
 type MockPrismaService = {
   user: {
@@ -17,8 +17,8 @@ type MockPrismaService = {
   };
 };
 
-describe("UsersRepository", () => {
-  let repository: UsersRepository;
+describe("UserRepository", () => {
+  let repository: UserRepository;
   let prismaServiceMock: MockPrismaService;
 
   beforeEach(async () => {
@@ -31,7 +31,7 @@ describe("UsersRepository", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UsersRepository,
+        UserRepository,
         {
           provide: PrismaService,
           useValue: prismaServiceMock,
@@ -39,7 +39,7 @@ describe("UsersRepository", () => {
       ],
     }).compile();
 
-    repository = module.get<UsersRepository>(UsersRepository);
+    repository = module.get<UserRepository>(UserRepository);
     jest.spyOn(Logger.prototype, "error").mockImplementation(() => {});
   });
 

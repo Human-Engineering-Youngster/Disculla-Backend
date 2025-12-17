@@ -23,7 +23,7 @@ export class VerifySvix {
   /**
    * Svix署名を検証する
    * @param {string} body - raw body リクエスト
-   * @param {SvixHeaders} svixHeaders - Svixヘッダー
+   * @param {WebhookRequiredHeaders} svixHeaders - Svixヘッダー
    * @throws {WebhookVerificationError} 署名が無効な場合にスローされる例外
    */
   verifySignature(body: string, svixHeaders: WebhookRequiredHeaders): void {

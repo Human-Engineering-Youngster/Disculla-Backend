@@ -1,5 +1,5 @@
-import { SaveUserVo } from "src/modules/users/domain/save-user.vo";
-import { User } from "src/modules/users/domain/user.entity";
+import { SaveUserVo } from "src/modules/user/domain/save-user.vo";
+import { User } from "src/modules/user/domain/user.entity";
 
 /**
  * ユーザーリポジトリのトークン

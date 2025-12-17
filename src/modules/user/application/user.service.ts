@@ -1,19 +1,19 @@
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 
-import { ClerkIdVo } from "src/modules/users/domain/clerk-id.vo";
-import { SaveUserVo } from "src/modules/users/domain/save-user.vo";
-import { AvatarUrlVo } from "src/modules/users/domain/user-avatar-url.vo";
-import { NameVo } from "src/modules/users/domain/user-name.vo";
-import { User } from "src/modules/users/domain/user.entity";
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { SaveUserVo } from "src/modules/user/domain/save-user.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
+import { User } from "src/modules/user/domain/user.entity";
 import {
   IUserRepository,
   USER_REPOSITORY,
-} from "src/modules/users/domain/user.repository.interface";
-import { SaveUserDto, saveUserEventTypes } from "src/modules/users/interface/dto/save-user.dto";
+} from "src/modules/user/domain/user.repository.interface";
+import { SaveUserDto, saveUserEventTypes } from "src/modules/user/interface/dto/save-user.dto";
 
 @Injectable()
-export class SaveUsersService {
-  private readonly logger = new Logger(SaveUsersService.name);
+export class UserService {
+  private readonly logger = new Logger(UserService.name);
 
   constructor(
     @Inject(USER_REPOSITORY)

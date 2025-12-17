@@ -1,25 +1,25 @@
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { ClerkIdVo } from "src/modules/users/domain/clerk-id.vo";
-import { AvatarUrlVo } from "src/modules/users/domain/user-avatar-url.vo";
-import { IdVo } from "src/modules/users/domain/user-id.vo";
-import { NameVo } from "src/modules/users/domain/user-name.vo";
-import { User } from "src/modules/users/domain/user.entity";
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { IdVo } from "src/modules/user/domain/user-id.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
+import { User } from "src/modules/user/domain/user.entity";
 import {
   IUserRepository,
   USER_REPOSITORY,
-} from "src/modules/users/domain/user.repository.interface";
+} from "src/modules/user/domain/user.repository.interface";
 import {
   SaveUserDto,
   SaveUserEventTypes,
   saveUserEventTypes,
-} from "src/modules/users/interface/dto/save-user.dto";
+} from "src/modules/user/interface/dto/save-user.dto";
 
-import { SaveUsersService } from "./save-users.service";
+import { UserService } from "./user.service";
 
-describe("SaveUsersService", () => {
-  let service: SaveUsersService;
+describe("UserService", () => {
+  let service: UserService;
   let userRepositoryMock: jest.Mocked<IUserRepository>;
 
   beforeEach(async () => {
@@ -30,7 +30,7 @@ describe("SaveUsersService", () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SaveUsersService,
+        UserService,
         {
           provide: USER_REPOSITORY,
           useValue: userRepositoryMock,
@@ -38,7 +38,7 @@ describe("SaveUsersService", () => {
       ],
     }).compile();
 
-    service = module.get<SaveUsersService>(SaveUsersService);
+    service = module.get<UserService>(UserService);
   });
 
   it("should be defined", () => {

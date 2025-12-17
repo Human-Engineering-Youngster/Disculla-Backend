@@ -2,14 +2,14 @@ import { Module } from "@nestjs/common";
 
 import { PrismaModule } from "./prisma.module";
 import { SvixModule } from "./svix.module";
-import { SaveUsersService } from "./users/application/save-users.service";
-import { USER_REPOSITORY } from "./users/domain/user.repository.interface";
-import { UsersRepository } from "./users/infrastructure/users.repository";
-import { WebhookUsersController } from "./users/interface/webhook-users.controller";
+import { UserService } from "./user/application/user.service";
+import { USER_REPOSITORY } from "./user/domain/user.repository.interface";
+import { UserRepository } from "./user/infrastructure/user.repository";
+import { WebhookUsersController } from "./user/interface/webhook-users.controller";
 
 @Module({
   imports: [PrismaModule, SvixModule],
   controllers: [WebhookUsersController],
-  providers: [SaveUsersService, { provide: USER_REPOSITORY, useClass: UsersRepository }],
+  providers: [UserService, { provide: USER_REPOSITORY, useClass: UserRepository }],
 })
 export class UserModule {}

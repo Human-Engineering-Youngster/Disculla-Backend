@@ -1,8 +1,8 @@
-import { ClerkIdVo } from "src/modules/users/domain/clerk-id.vo";
-import { AvatarUrlVo } from "src/modules/users/domain/user-avatar-url.vo";
-import { IdVo } from "src/modules/users/domain/user-id.vo";
-import { NameVo } from "src/modules/users/domain/user-name.vo";
-import { User } from "src/modules/users/domain/user.entity";
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { IdVo } from "src/modules/user/domain/user-id.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
+import { User } from "src/modules/user/domain/user.entity";
 
 import { UserMapper } from "./user.mapper";
 

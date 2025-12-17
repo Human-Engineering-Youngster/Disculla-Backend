@@ -1,4 +1,4 @@
-import { User } from "src/modules/users/domain/user.entity";
+import { User } from "src/modules/user/domain/user.entity";
 
 export interface UsersResponse {
   id: string;

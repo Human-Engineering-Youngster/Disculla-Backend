@@ -1,18 +1,18 @@
 import { Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 
 import { PrismaService } from "src/modules/prisma/prisma.service";
-import { ClerkIdVo } from "src/modules/users/domain/clerk-id.vo";
-import { SaveUserVo } from "src/modules/users/domain/save-user.vo";
-import { AvatarUrlVo } from "src/modules/users/domain/user-avatar-url.vo";
-import { IdVo } from "src/modules/users/domain/user-id.vo";
-import { NameVo } from "src/modules/users/domain/user-name.vo";
-import { User } from "src/modules/users/domain/user.entity";
-import { IUserRepository } from "src/modules/users/domain/user.repository.interface";
-import { PrismaUser } from "src/modules/users/infrastructure/prisma-user.type";
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { SaveUserVo } from "src/modules/user/domain/save-user.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { IdVo } from "src/modules/user/domain/user-id.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
+import { User } from "src/modules/user/domain/user.entity";
+import { IUserRepository } from "src/modules/user/domain/user.repository.interface";
+import { PrismaUser } from "src/modules/user/infrastructure/prisma-user.type";
 
 @Injectable()
-export class UsersRepository implements IUserRepository {
-  private readonly logger = new Logger(UsersRepository.name);
+export class UserRepository implements IUserRepository {
+  private readonly logger = new Logger(UserRepository.name);
 
   constructor(private readonly prismaService: PrismaService) {}
 

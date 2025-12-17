@@ -1,6 +1,6 @@
 import { Server } from "http";
 
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { AppModule } from "src/modules/app.module";
@@ -33,6 +33,15 @@ describe("WebhookUsersController (e2e)", () => {
     app = moduleFixture.createNestApplication({
       rawBody: true,
     });
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      })
+    );
+
     await app.init();
 
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
@@ -125,7 +134,7 @@ describe("WebhookUsersController (e2e)", () => {
       .set("svix-timestamp", timestamp)
       .set("svix-signature", signature)
       .send(body)
-      .expect(201)
+      .expect(200)
       .expect((res) => {
         expect(res.body).toEqual({
           id: "123e4567-e89b-12d3-a456-426614174000",
@@ -154,17 +163,45 @@ describe("WebhookUsersController (e2e)", () => {
       .expect(400);
   });
 
-  it("/webhooks/clerk/users (POST) - invalid signature", async () => {
-    const verifySpy = jest.spyOn(verifySvix, "verifySignature").mockImplementation(() => {
-      throw new Error("Invalid signature");
-    });
+  it("/webhooks/clerk/users (POST) - invalid body (validation error)", async () => {
+    const invalidBody = {
+      type: "invalid.type",
+      data: {
+        id: "user_123",
+        username: "testuser",
+        image_url: "invalid-url",
+      },
+    };
 
     return request(app.getHttpServer() as Server)
       .post("/webhooks/clerk/users")
       .set("svix-id", "id")
       .set("svix-timestamp", "ts")
       .set("svix-signature", "sig")
-      .send({})
+      .send(invalidBody)
+      .expect(400);
+  });
+
+  it("/webhooks/clerk/users (POST) - invalid signature", async () => {
+    const verifySpy = jest.spyOn(verifySvix, "verifySignature").mockImplementation(() => {
+      throw new Error("Invalid signature");
+    });
+
+    const body = {
+      type: "user.created",
+      data: {
+        id: "user_123",
+        username: "testuser",
+        image_url: "http://example.com/avatar.png",
+      },
+    };
+
+    return request(app.getHttpServer() as Server)
+      .post("/webhooks/clerk/users")
+      .set("svix-id", "id")
+      .set("svix-timestamp", "ts")
+      .set("svix-signature", "sig")
+      .send(body)
       .expect(401)
       .expect(() => {
         expect(verifySpy).toHaveBeenCalled();

@@ -1,7 +1,7 @@
-import { ClerkIdVo } from "src/modules/users/domain/clerk-id.vo";
-import { AvatarUrlVo } from "src/modules/users/domain/user-avatar-url.vo";
-import { IdVo } from "src/modules/users/domain/user-id.vo";
-import { NameVo } from "src/modules/users/domain/user-name.vo";
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { IdVo } from "src/modules/user/domain/user-id.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
 
 /**
  * ユーザーエンティティ
