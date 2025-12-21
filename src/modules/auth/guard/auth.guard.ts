@@ -13,8 +13,16 @@ import { Request } from "express";
 @Injectable()
 export class AuthGuard implements CanActivate {
   private readonly logger = new Logger(AuthGuard.name);
+  private readonly secretKey: string;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+    const key = this.configService.get<string>("CLERK_SECRET_KEY");
+    if (!key) {
+      throw new Error("CLERK_SECRET_KEY environment variable is not set");
+    }
+
+    this.secretKey = key;
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -27,13 +35,8 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const secretKey = this.configService.get<string>("CLERK_SECRET_KEY");
-      if (!secretKey) {
-        throw new Error("CLERK_SECRET_KEY environment variable is not set");
-      }
-
       const payload = await verifyToken(token, {
-        secretKey,
+        secretKey: this.secretKey,
       });
       request.clerkId = payload.sub;
     } catch (error) {
