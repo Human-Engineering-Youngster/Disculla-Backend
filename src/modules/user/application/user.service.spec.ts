@@ -1,0 +1,101 @@
+import { BadRequestException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+
+import { ClerkIdVo } from "src/modules/user/domain/clerk-id.vo";
+import { AvatarUrlVo } from "src/modules/user/domain/user-avatar-url.vo";
+import { IdVo } from "src/modules/user/domain/user-id.vo";
+import { NameVo } from "src/modules/user/domain/user-name.vo";
+import { User } from "src/modules/user/domain/user.entity";
+import {
+  IUserRepository,
+  USER_REPOSITORY,
+} from "src/modules/user/domain/user.repository.interface";
+import {
+  SaveUserDto,
+  SaveUserEventTypes,
+  saveUserEventTypes,
+} from "src/modules/user/interface/dto/save-user.dto";
+
+import { UserService } from "./user.service";
+
+describe("UserService", () => {
+  let service: UserService;
+  let userRepositoryMock: jest.Mocked<IUserRepository>;
+
+  beforeEach(async () => {
+    userRepositoryMock = {
+      create: jest.fn(),
+      update: jest.fn(),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UserService,
+        {
+          provide: USER_REPOSITORY,
+          useValue: userRepositoryMock,
+        },
+      ],
+    }).compile();
+
+    service = module.get<UserService>(UserService);
+  });
+
+  it("should be defined", () => {
+    expect(service).toBeDefined();
+  });
+
+  describe("execute", () => {
+    const validData = {
+      id: "user_123",
+      username: "testuser",
+      image_url: "http://example.com/avatar.png",
+    };
+
+    const expectedUser = User.reconstruct(
+      IdVo.of("550e8400-e29b-41d4-a716-446655440000"),
+      ClerkIdVo.of("user_123"),
+      NameVo.of("testuser"),
+      AvatarUrlVo.of("http://example.com/avatar.png")
+    );
+
+    it("should create user when type is CREATE", async () => {
+      userRepositoryMock.create.mockResolvedValue(expectedUser);
+
+      const dto: SaveUserDto = {
+        type: saveUserEventTypes.CREATE,
+        data: validData,
+      };
+
+      const createSpy = jest.spyOn(userRepositoryMock, "create");
+      const result = await service.execute(dto);
+
+      expect(createSpy).toHaveBeenCalledWith(expect.any(Object));
+      expect(result).toEqual(expectedUser);
+    });
+
+    it("should update user when type is UPDATE", async () => {
+      userRepositoryMock.update.mockResolvedValue(expectedUser);
+
+      const dto: SaveUserDto = {
+        type: saveUserEventTypes.UPDATE,
+        data: validData,
+      };
+
+      const updateSpy = jest.spyOn(userRepositoryMock, "update");
+      const result = await service.execute(dto);
+
+      expect(updateSpy).toHaveBeenCalledWith(expect.any(Object));
+      expect(result).toEqual(expectedUser);
+    });
+
+    it("should throw BadRequestException for unsupported type", async () => {
+      const dto: SaveUserDto = {
+        type: "unsupported.type" as unknown as SaveUserEventTypes,
+        data: validData,
+      };
+
+      await expect(service.execute(dto)).rejects.toThrow(BadRequestException);
+    });
+  });
+});

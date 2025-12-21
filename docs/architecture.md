@@ -41,6 +41,8 @@ src/
     │       │   ├── create-xx.dto.ts
     │       │   ├── update-xx.dto.ts
     │       │   └── xx-response.dto.ts
+    │       ├── mapper/              # データ変換マッパー
+    │       │   └── xx.mapper.ts    # DTO ⇔ VO/Entity変換
     │       └── xx.controller.ts     # コントローラー(HTTP/API入口)
     │
     └── xx.module.ts                 # モジュール定義(DI設定)
@@ -73,6 +75,7 @@ src/
 - **含まれるもの**:
   - `Controller`: APIエンドポイント定義
   - `DTO`: 外部とのデータ交換形式
+  - `Mapper`: DTO ⇔ VO/Entity間のデータ変換
 
 ### 4. **Infrastructure層** (最も外側)
 
@@ -80,6 +83,7 @@ src/
 - **特徴**: Domain層のインターフェースを実装
 - **含まれるもの**:
   - `Repository実装`: 実際のデータベース操作
+  - `Type定義`: ORM固有の型定義(例: Prismaの型)
 
 ---
 
@@ -100,6 +104,35 @@ Interface ──────────┘
 
 ---
 
+## Mapperパターン
+
+### 目的
+
+Mapperは、異なる層間のデータ変換を担当します。主に以下の変換を行います:
+
+- **DTO → VO**: 外部から受け取ったDTOをドメイン層のValue Objectに変換
+- **Entity → DTO**: ドメインエンティティをAPIレスポンス用のDTOに変換
+- **VO → DTO**: Value ObjectをDTOに変換
+
+### 責務
+
+- データ構造の変換ロジックを一箇所に集約
+- 各層の独立性を保つ
+- 型安全なデータ変換を提供
+
+### 配置場所
+
+Mapperは`interface/mapper/`ディレクトリに配置され、Interface層に属します。
+
+### 利点
+
+- **単一責任の原則**: データ変換ロジックを専用のクラスに分離
+- **テスタビリティ**: 変換ロジックを独立してテスト可能
+- **保守性**: 変換ロジックの変更が一箇所で完結
+- **再利用性**: 複数のコントローラーやサービスから利用可能
+
+---
+
 ## 命名規則
 
 | ファイル種別              | 命名例                         | 説明                   |
@@ -109,8 +142,9 @@ Interface ──────────┘
 | Repository Interface      | `user.repository.interface.ts` | 抽象リポジトリ         |
 | Repository Implementation | `user.repository.ts`           | リポジトリ実装         |
 | Service                   | `user.service.ts`              | ユースケース実装       |
-| Controller                | `user.controller.ts`           | APIコントローラー      |
+| Controller                | `users.controller.ts`          | APIコントローラー      |
 | DTO                       | `create-user.dto.ts`           | データ転送オブジェクト |
+| Mapper                    | `user.mapper.ts`               | データ変換マッパー     |
 | Module                    | `user.module.ts`               | モジュール定義         |
 
 ---
@@ -121,17 +155,25 @@ Interface ──────────┘
 modules/user/
 ├── domain/
 │   ├── user.entity.ts                    # Userエンティティ
+│   ├── user-id.vo.ts                     # ユーザーID値オブジェクト
+│   ├── user-name.vo.ts                   # ユーザー名値オブジェクト
 │   ├── user-email.vo.ts                  # メールアドレス値オブジェクト
 │   ├── create-user.vo.ts                 # ユーザー作成用VO
+│   ├── update-user.vo.ts                 # ユーザー更新用VO
 │   └── user.repository.interface.ts      # Userリポジトリインターフェース
 ├── application/
 │   └── user.service.ts                   # ユーザー管理サービス
 ├── infrastructure/
-│   └── user.repository.ts                # Userリポジトリ実装(TypeORM等)
+│   ├── user.repository.ts                # Userリポジトリ実装(Prisma)
+│   └── prisma-user.type.ts               # Prisma User型定義
 ├── interface/
 │   ├── dto/
-│   │   ├── create-user.dto.ts           # ユーザー作成リクエストDTO
-│   │   └── user-response.dto.ts         # ユーザーレスポンスDTO
-│   └── user.controller.ts                # UserコントローラーAPI
+│   │   ├── create-user.dto.ts            # ユーザー作成リクエストDTO
+│   │   ├── update-user.dto.ts            # ユーザー更新リクエストDTO
+│   │   └── user-response.dto.ts          # ユーザーレスポンスDTO
+│   ├── mapper/
+│   │   └── user.mapper.ts                # User Mapper (DTO ⇔ VO変換)
+│   ├── users.controller.ts               # Users コントローラー(RESTful API)
+│   └── users.controller.spec.ts          # コントローラーのテスト
 └── user.module.ts                        # Userモジュール定義
 ```
