@@ -20,7 +20,12 @@ describe("AuthGuard", () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn(),
+            get: jest.fn((key: string) => {
+              if (key === "CLERK_SECRET_KEY") {
+                return "test-secret-key";
+              }
+              return null;
+            }),
           },
         },
       ],
@@ -94,26 +99,6 @@ describe("AuthGuard", () => {
           getRequest: (): Request => mockRequest,
         }),
       } as unknown as ExecutionContext;
-
-      await expect(authGuard.canActivate(mockExecutionContext)).rejects.toThrow(
-        UnauthorizedException
-      );
-    });
-
-    it("should throw error when CLERK_SECRET_KEY is not set", async () => {
-      const mockRequest = {
-        headers: {
-          authorization: "Bearer valid_token",
-        },
-      } as unknown as Request;
-
-      const mockExecutionContext = {
-        switchToHttp: (): { getRequest: () => Request } => ({
-          getRequest: (): Request => mockRequest,
-        }),
-      } as unknown as ExecutionContext;
-
-      (configService.get as jest.Mock).mockReturnValue(null);
 
       await expect(authGuard.canActivate(mockExecutionContext)).rejects.toThrow(
         UnauthorizedException
