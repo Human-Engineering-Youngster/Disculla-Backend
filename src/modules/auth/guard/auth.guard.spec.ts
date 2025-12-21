@@ -1,4 +1,8 @@
-import { ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import {
+  ExecutionContext,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
@@ -119,7 +123,9 @@ describe("AuthGuard", () => {
       } as unknown as ExecutionContext;
 
       (configService.get as jest.Mock).mockReturnValue("test-secret-key");
-      (clerkBackend.verifyToken as jest.Mock).mockRejectedValue(new Error("Invalid token"));
+      (clerkBackend.verifyToken as jest.Mock).mockRejectedValue(
+        new InternalServerErrorException("Invalid token")
+      );
 
       await expect(authGuard.canActivate(mockExecutionContext)).rejects.toThrow(
         UnauthorizedException

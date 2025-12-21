@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  InternalServerErrorException,
   Logger,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -18,7 +19,7 @@ export class AuthGuard implements CanActivate {
   constructor(private readonly configService: ConfigService) {
     const key = this.configService.get<string>("CLERK_SECRET_KEY");
     if (!key) {
-      throw new Error("CLERK_SECRET_KEY environment variable is not set");
+      throw new InternalServerErrorException("CLERK_SECRET_KEY environment variable is not set");
     }
 
     this.secretKey = key;
